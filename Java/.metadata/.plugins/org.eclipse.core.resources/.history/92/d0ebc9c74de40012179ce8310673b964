@@ -1,0 +1,427 @@
+package database;
+
+import java.sql.*;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Vector;
+
+public class Interface {
+	public static final int BOOK = 0;
+	public static final int MEMBER = 1;
+	public static final int BORROW = 2;
+	public static final int RETURN = 3;
+
+	private Vector connectDataBase(String table, String fieldname, int ID,
+			String item) throws Exception {
+		// String rst = "0";
+		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+		// String dbur1 = "jdbc:odbc:yulang";
+		String dbur1 = "jdbc:odbc:Driver=Microsoft Access Driver (*.mdb, *.accdb);DBQ=E:\\a1.mdb";
+		Connection conn = DriverManager.getConnection(dbur1, "", "");
+		// Connection conn=new Connection("jdbc:odbc:yulang");
+		Statement stmt = conn.createStatement();
+		String sql = "select " + item + " from " + table + " where "
+				+ fieldname + "=" + ID;
+		ResultSet rs = stmt.executeQuery(sql);
+		// while(rs.next()){
+		// System.out.println(rs.getString(2));
+		// }
+		// rs.close();
+		Vector v = new Vector();
+		if (table.equals("memberinfo")) {
+			while (rs.next()) {
+				Member m = new Member();
+				m.setCurBorrow(rs.getInt(9));
+				m.setMaxBorrow(rs.getInt(8));
+				m.setMemAddr(rs.getString(7));
+				m.setMemID(rs.getInt(2));
+				m.setMemIdent(rs.getString(5));
+				m.setMemName(rs.getString(3));
+				m.setMemSex(rs.getString(4));
+				m.setMemtele(rs.getString(6));
+				m.setPassWord(rs.getString(10));
+				v.addElement(m);
+			}
+		} else {
+			while (rs.next()) {
+				Book b = new Book();
+				b.setBookName(rs.getString(2));
+				b.setBorrowtime(rs.getString(6));
+				b.setDeadline(rs.getString(8));
+				b.setRecmderID(rs.getInt(7));
+				b.setRecommend(rs.getString(4));
+				b.setStatus(rs.getString(5));
+				v.addElement(b);
+			}
+		}
+		stmt.close();
+		conn.close();
+		return v;
+
+	}
+
+	private Vector connectDataBase(String table, String fieldname,
+			String value, String item) throws Exception {
+		// String rst = "0";
+		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+		// String dbur1 = "jdbc:odbc:yulang";
+		String dbur1 = "jdbc:odbc:Driver=Microsoft Access Driver (*.mdb, *.accdb);DBQ=E:\\a1.mdb";
+		Connection conn = DriverManager.getConnection(dbur1, "", "");
+		// Connection conn=new Connection("jdbc:odbc:yulang");
+		Statement stmt = conn.createStatement();
+		String sql = "select " + item + " from " + table + " where "
+				+ fieldname + "=" + "'" + value + "'";
+		ResultSet rs = stmt.executeQuery(sql);
+
+		// rs.close();
+		Vector v = new Vector();
+		if (table.equals("memberinfo")) {
+			while (rs.next()) {
+				Member m = new Member();
+				m.setCurBorrow(rs.getInt(9));
+				m.setMaxBorrow(rs.getInt(8));
+				m.setMemAddr(rs.getString(7));
+				m.setMemID(rs.getInt(2));
+				m.setMemIdent(rs.getString(5));
+				m.setMemName(rs.getString(3));
+				m.setMemSex(rs.getString(4));
+				m.setMemtele(rs.getString(6));
+				m.setPassWord(rs.getString(10));
+				v.addElement(m);
+			}
+		} else {
+			while (rs.next()) {
+				Book b = new Book();
+				b.setBookName(rs.getString(2));
+				b.setBorrowtime(rs.getString(6));
+				b.setDeadline(rs.getString(8));
+				b.setRecmderID(rs.getInt(7));
+				b.setRecommend(rs.getString(4));
+				b.setStatus(rs.getString(5));
+				b.setBookId(rs.getInt(3));
+				v.addElement(b);
+			}
+		}
+		stmt.close();
+		conn.close();
+		return v;
+
+	}
+
+	private int modifyDataBase(Book b) throws Exception {
+		// String rst = "0";
+		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+		// String dbur1 = "jdbc:odbc:yulang";
+		String dbur1 = "jdbc:odbc:Driver=Microsoft Access Driver (*.mdb, *.accdb);DBQ=E:\\a1.mdb";
+		Connection conn = DriverManager.getConnection(dbur1, "", "");
+		// Connection conn=new Connection("jdbc:odbc:yulang");
+		Statement stmt = conn.createStatement();
+		String sql = "insert into Book (Bookname,BookID,recommend,status,time,recmdID,deadline) values (";
+		sql += "'" + b.getBookName() + "'" + ",";
+		sql += Integer.toString(b.getBookId()) + ",";
+		sql += "'" + b.getRecommend() + "'" + ",";
+		sql += "'" + b.getStatus() + "'" + ",";
+		sql += "'" + b.getBorrowtime() + "'" + ",";
+		sql += Integer.toString(b.getRecmderID()) + ",";
+		sql += "'" + b.getDeadline() + "'" + ")";
+
+		stmt.execute(sql);
+
+		// ResultSet rs = stmt.executeQuery(sql);
+
+		// rs.close();
+		stmt.close();
+		conn.close();
+		return 0;
+
+	}
+
+	private int modifyDataBase(Member m) throws Exception {
+		// String rst = "0";
+		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+		// String dbur1 = "jdbc:odbc:yulang";
+		String dbur1 = "jdbc:odbc:Driver=Microsoft Access Driver (*.mdb, *.accdb);DBQ=E:\\a1.mdb";
+		Connection conn = DriverManager.getConnection(dbur1, "", "");
+		// Connection conn=new Connection("jdbc:odbc:yulang");
+		Statement stmt = conn.createStatement();
+		String sql = "insert into memberinfo (memID,memname,memsex,memtele,memaddr,maxborow,curborrow,password) values (";
+		sql += Integer.toString(m.getMemID()) + ",";
+		sql += "'" + m.getMemName() + "'" + ",";
+		sql += "'" + m.getMemSex() + "'" + ",";
+		sql += "'" + m.getMemtele() + "'" + ",";
+		sql += "'" + m.getMemAddr() + "'" + ",";
+		sql += Integer.toString(m.getMaxBorrow()) + ",";
+		sql += Integer.toString(m.getCurBorrow()) + ",";
+		sql += "'" + m.getPassWord() + "'" + ")";
+
+		stmt.execute(sql);
+
+		// ResultSet rs = stmt.executeQuery(sql);
+
+		// rs.close();
+		stmt.close();
+		conn.close();
+		return 0;
+
+	}
+
+	public void deleteDataBase(final int field, int id) throws Exception {
+		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+		String dbur1 = "jdbc:odbc:Driver=Microsoft Access Driver (*.mdb, *.accdb);DBQ=E:\\a1.mdb";
+		Connection conn = DriverManager.getConnection(dbur1, "", "");
+		Statement stmt = conn.createStatement();
+		String sql;
+		if (field == BOOK) {
+			sql = "select * from Book where BookID =";
+
+		} else {
+			sql = "select * from memberinfo where memID =";
+		}
+		sql += Integer.toString(id);
+		ResultSet rs = stmt.executeQuery(sql);
+		while (rs.next()) {
+			rs.deleteRow();
+		}
+
+	}
+
+	public void updateDataBase(final int op, int bookid, int borrowerid, String time)
+			throws Exception {
+		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+		String dbur1 = "jdbc:odbc:Driver=Microsoft Access Driver (*.mdb, *.accdb);DBQ=E:\\a1.mdb";
+		Connection conn = DriverManager.getConnection(dbur1, "", "");
+		Statement stmt = conn.createStatement();
+		String sql;
+		if (op == BORROW) {
+			sql = "update Book set status = \' Borrowed \'";
+		} else {
+			sql = "update Book set status = \' Unborrowed \'";
+		}
+		sql += " where BookID = " + Integer.toString(bookid);
+
+		stmt.executeUpdate(sql);
+		stmt.close();
+		conn.close();
+		conn = DriverManager.getConnection(dbur1, "", "");
+		Statement stmt1 = conn.createStatement();
+		if (op == BORROW) {
+			sql = "update Book set recmdID = " + Integer.toString(borrowerid);
+			stmt1.execute(sql);
+		}
+//		stmt.close();
+		stmt1.close();
+		conn.close();
+		stmt = conn.createStatement();
+		sql = "update Book set time = \' " + time + "'" + " where BookID = " + Integer.toString(bookid);
+		stmt.executeUpdate(sql);
+		stmt.close();
+		conn.close();
+	}
+	
+	public void updateDataBase( int bookid,int memid, String recmd)
+			throws Exception {
+		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+		String dbur1 = "jdbc:odbc:Driver=Microsoft Access Driver (*.mdb, *.accdb);DBQ=E:\\a1.mdb";
+		Connection conn = DriverManager.getConnection(dbur1, "", "");
+		Statement stmt = conn.createStatement();
+		String sql;
+		sql = "update Book set recommend '"+ recmd + "'";
+		sql += " where BookID = " + Integer.toString(bookid);
+
+		stmt.executeUpdate(sql);
+		stmt.close();
+		conn.close();
+	}
+
+	public static void main(String args[]) throws Exception {
+		Interface i = new Interface();
+		Vector v = i.getBookInfo("123");
+		Book m = (Book) v.firstElement();
+		System.out.println(m.getBookId());
+		/*
+		 * while(rs.next()){ System.out.println(rs.getString(1)); }
+		 */
+	}
+
+	public Vector getInfo(int id) throws Exception {
+		Vector v = new Vector();
+		// int i = 0;
+		v = connectDataBase("memberinfo", "memid", id, "*");
+		/*
+		 * while (rs.next()) { Member m = new Member();
+		 * m.setCurBorrow(rs.getInt(9)); m.setMaxBorrow(rs.getInt(8));
+		 * m.setMemAddr(rs.getString(7)); m.setMemID(rs.getInt(2));
+		 * m.setMemIdent(rs.getString(5)); m.setMemName(rs.getString(3));
+		 * m.setMemSex(rs.getString(4)); m.setMemtele(rs.getString(6));
+		 * m.setPassWord(rs.getString(10)); v.addElement(m); }
+		 */
+		return v;
+	}
+
+	public Vector getInfo(String name) throws Exception {
+		Vector v = new Vector();
+		int i = 0;
+		v = connectDataBase("memberinfo", "memname", name, "*");
+		/*
+		 * while (rs.next()) { Member m = new Member();
+		 * m.setCurBorrow(rs.getInt(9)); m.setMaxBorrow(rs.getInt(8));
+		 * m.setMemAddr(rs.getString(7)); m.setMemID(rs.getInt(2));
+		 * m.setMemIdent(rs.getString(5)); m.setMemName(rs.getString(3));
+		 * m.setMemSex(rs.getString(4)); m.setMemtele(rs.getString(6));
+		 * m.setPassWord(rs.getString(10)); v.addElement(m); }
+		 */
+		return v;
+	}
+
+	public Vector getBookInfo(String name) throws Exception {
+		Vector v = new Vector();
+		int i = 0;
+		v = connectDataBase("Book", "Bookname", name, "*");
+		/*
+		 * while (rs.next()) { Book b = new Book(); b.setBookName(name);
+		 * b.setBorrowtime(rs.getString(6)); b.setDeadline(rs.getString(8));
+		 * b.setRecmderID(rs.getInt(7)); b.setRecommend(rs.getString(4));
+		 * b.setStatus(rs.getString(5)); v.addElement(b); }
+		 */
+		return v;
+	}
+
+	public Vector getBookinfo(int bookid) throws Exception {
+		Vector v = new Vector();
+		int i = 0;
+		v = connectDataBase("Book", "BookID", bookid, "*");
+		/*
+		 * while (rs.next()) { Book b = new Book();
+		 * b.setBookName(rs.getString(2)); b.setBorrowtime(rs.getString(6));
+		 * b.setDeadline(rs.getString(8)); b.setRecmderID(rs.getInt(7));
+		 * b.setRecommend(rs.getString(4)); b.setStatus(rs.getString(5));
+		 * v.addElement(b); }
+		 */
+		return v;
+	}
+
+	public int regist(Member m) throws Exception {
+		modifyDataBase(m);
+
+		return 0;
+
+	}
+
+	public int recordBook(Book b) throws Exception {
+		modifyDataBase(b);
+
+		return 0;
+	}
+
+	public Member getRecmdInfo(final int field, int id) throws Exception {// fieldÃÓBOOKªÚ «MEMBER
+		Member m;
+
+		if (field == BOOK) {
+			Book b = new Book();
+			Vector v = connectDataBase("Book", "BookID", id, "*");
+			b = (Book) v.firstElement();
+			v = connectDataBase("memberinfo", "memID", b.getRecmderID(), "*");
+			m = (Member) v.firstElement();
+		} else {
+			Vector v1 = connectDataBase("memberinfo", "memID", id, "*");
+			m = (Member) v1.firstElement();
+
+		}
+
+		return m;
+
+	}
+
+	public Boolean canBorrow(int borrowerid) throws Exception {
+		Vector v1 = connectDataBase("memberinfo", "memID", borrowerid, "*");
+		Member m = (Member) v1.firstElement();
+		if (m.getMaxBorrow() < m.getCurBorrow())
+			return true;
+		else
+			return false;
+
+	}
+
+	public void borrowBook(int bookid, int memid) throws Exception {
+		if (!canBorrow(memid)) {
+			System.out.println("cannot borrow book anymore!");
+			return;
+		}
+
+		updateDataBase(BORROW, bookid,memid);
+
+	}
+
+	public void returnBook(int bookid,int memid) throws Exception {
+		updateDataBase(RETURN, bookid,memid);
+		Calendar.toString()
+
+	}
+
+	public void deletBook(int bookid) throws Exception {
+		deleteDataBase(BOOK, bookid);
+
+	}
+
+	public void deletMember(int memid) throws Exception {
+		deleteDataBase(MEMBER, memid);
+	}
+
+	public Vector<String> returnRcmd(final int field, int id) throws Exception {// field
+																				// =
+																				// BOOK
+																				// or
+																				// MEMBER
+		Vector v = new Vector();
+		Vector<String> rst = new Vector<String>();
+		Book b = new Book();
+		if (field == BOOK) {
+
+			v = connectDataBase("Book", "BookID", id, "*");
+			Iterator i = v.iterator();
+			while (i.hasNext()) {
+				b = (Book) i.next();
+				rst.addElement(b.getRecommend());
+			}
+		} else {
+			// Member m = new Member();
+			v = connectDataBase("Book", "recmdID", id, "*");
+			Iterator j = v.iterator();
+			while (j.hasNext()) {
+				b = (Book) j.next();
+				rst.addElement(b.getRecommend());
+			}
+		}
+
+		return rst;
+
+	}
+
+	public int countAvailable(String bookName) throws Exception {
+		int num = 0;
+		Book b = new Book();
+		Vector v = connectDataBase("Book", "Bookname", bookName, "*");
+		num = v.size();
+		Iterator i = v.iterator();
+		while (i.hasNext()) {
+			b = (Book) i.next();
+			if (b.getStatus().equals("Borrowed"))
+				num--;
+		}
+		return num;
+
+	}
+
+	public int countTotal(String bookName) throws Exception {
+		int num = 0;
+		Book b = new Book();
+		Vector v = connectDataBase("Book", "Bookname", bookName, "*");
+		num = v.size();
+		return num;
+	}
+	
+	public void recmd(int bookid, int memid, String recmd) throws Exception{
+		updateDataBase(bookid, memid, recmd);
+	}
+
+}

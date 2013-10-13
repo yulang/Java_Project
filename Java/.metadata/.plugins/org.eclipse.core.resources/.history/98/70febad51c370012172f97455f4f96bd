@@ -1,0 +1,5 @@
+package com.sun.java.swing.plaf.nimbus;
+
+public class NimbusLookAndFeel {
+
+}
